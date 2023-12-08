@@ -1,4 +1,6 @@
 flask
 Flask-CORS
+Flask[async]
 requests
 asyncio
+aiohttp
