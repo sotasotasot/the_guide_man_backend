@@ -5,7 +5,7 @@ import aiohttp
 import asyncio
 
 url = "https://deliverysupport.stg.pioneerapis.com/"
-api_key = "pio_hack_20231208"
+api_key = "PAK1 Credential=zPsJKOJCxNbkpddLbLoZ Signature=6a75i625tzfqok3mchxe79831o2t5u0gccl9np0eyf3mq61e29megt8ml3f2htky"
 
 json_data = {
     "userID": "testUser",
@@ -114,7 +114,7 @@ if __name__ == "__main__":
 # import asyncio
 
 # url = "https://deliverysupport.stg.pioneerapis.com/"
-# api_key = "pio_hack_20231208"
+# api_key = "PAK1 Credential=zPsJKOJCxNbkpddLbLoZ Signature=6a75i625tzfqok3mchxe79831o2t5u0gccl9np0eyf3mq61e29megt8ml3f2htky"
 
 # json_data = {
 #   "userID": "testUser",
@@ -211,5 +211,5 @@ if __name__ == "__main__":
    
 
 
-if __name__ == "__main__":
-  app.run(debug=True, host='localhost')
+# if __name__ == "__main__":
+#   app.run(debug=True, host='localhost')
