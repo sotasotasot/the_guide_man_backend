@@ -201,22 +201,23 @@ def api():
     except Exception as e:
         return jsonify({'error': str(e)})
 
-@app.route('/hidden', methods=['GET'])
 def get_routing_all():
     try:
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
         order = {"depo_ponto.json":(depo, ponto), "ponto_yasaka.json":(ponto, yasaka), "yasaka_kiyomzu.json":(yasaka, kiyomizu)}
         for i, (key, (start, dest)) in enumerate(order.items()):
-            if i!=2:
-                continue
-            print(key)
-            response = loop.run_until_complete(make_async_request("/navicore/calcRoute", get_json_route(depo, ponto)))
+            response = loop.run_until_complete(make_async_request("/navicore/calcRoute", get_json_route(start, dest)))
             with open("data/"+key, 'w') as f:
                 json.dump(response, f)
         return "success"
     except Exception as e:
         return jsonify({'error': str(e)})
+
+@app.route('/hidden', methods=['GET'])
+def hidden_fn():
+    return get_routing_all()
+
 
 @app.route('/vehicle', methods=['GET'])
 def api_vehicle():
