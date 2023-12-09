@@ -4,9 +4,10 @@ from flask_cors import CORS
 import requests
 import json
 import asyncio
+import aiohttp
 
 url = "https://deliverysupport.stg.pioneerapis.com/"
-api_key = "pio_hack_20231208"
+api_key = "PAK1 Credential=zPsJKOJCxNbkpddLbLoZ Signature=6a75i625tzfqok3mchxe79831o2t5u0gccl9np0eyf3mq61e29megt8ml3f2htky"
 
 json_data = {
   "userID": "testUser",
@@ -16,15 +17,9 @@ json_data = {
       "lon": 139.47167252901303
     },
     "destination": {
-      "lat": 35.93241737968212,
-      "lon": 139.47167252901303,
+      "lat": 35.7348,
+      "lon": 139.7077,
       "alongside": False,
-      "info": [
-        {
-          "key": "address",
-          "value": "川越市"
-        }
-      ]
     },
     "wayPoints": [
       {
@@ -38,7 +33,7 @@ json_data = {
   },
   "setTime": {
     "type": 0,
-    "time": "2020-01-01T08:30+09:00"
+    "time": "2023-01-01T08:30+09:00"
   },
   "options": {
     "priority": "recommended",
@@ -68,7 +63,7 @@ CORS(app)
 @app.route("/", methods=["GET"])
 def hello_world():
     return "<p>Hello, World!</p>"\
-    + "<a href=" + url_for("test", args="test") +"> test page </a>" 
+    + "<a href=" + url_for("test", args="test") +"> test page </a>"
 
 @app.route("/test/<args>", methods=["GET"])
 def test(args):
@@ -83,24 +78,27 @@ def sample():
         return redirect(url_for("test", args = keyword))
     return render_template("sample.html")
 
-@app.route('/api', methods=['GET'])
-async def api():
-    try:
-        async with app.app_context():
-            headers = {
-                'Authorization': "pio_hack_20231208",
-                'Content-Type': 'application/json',
-                'PEC-Traffic-ProviderKey': 'none',
-                'PEC-Traffic-ProviderUserID': "testUser",
-            }
-            json_data = jsonify(json_data)
-            response = await requests.post(url + "/navicore/calcRoute", headers=headers, data=json.dumps(json_data))
+async def make_async_request():
+    async with aiohttp.ClientSession() as session:
+        headers = {
+            'Authorization': api_key,
+            'Content-Type': 'application/json',
+            'PEC-Traffic-ProviderKey': 'none',
+            'PEC-Traffic-ProviderUserID': "testUser",
+        }
+        async with session.post(url + "/navicore/calcRoute", headers=headers, json=json_data) as response:
+            return await response.json()
 
-        return jsonify(response.json())
+@app.route('/api', methods=['GET'])
+def api():
+    try:
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        response = loop.run_until_complete(make_async_request())
+        print('pass')
+        return jsonify(response)
     except Exception as e:
         return jsonify({'error': str(e)})
-   
-
 
 if __name__ == "__main__":
   app.run(debug=True, host='localhost')
